@@ -55,10 +55,10 @@ async def main() -> None:
         logger.info(f"Scraper returned {len(candidates)} candidates")
         for c in candidates:
             logger.info(
-                "Candidate: %s | author=%s | videos=%s",
+                "Candidate: %s | author=%s | video=%s",
                 c.tweet_url,
                 c.author,
-                [str(u) for u in c.video_urls],
+                c.best_video_url,
             )
     except Exception as e:
         logger.error(f"An error occurred during scraping: {e}")
