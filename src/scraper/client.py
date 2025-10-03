@@ -1,11 +1,11 @@
 import logging
 from pathlib import Path
-from typing import Any
 from typing import List
 from typing import Optional
 
 from twikit import Client
 from twikit import TooManyRequests
+from twikit import Tweet
 
 from src.config import BASE_DIR
 from src.config import settings
@@ -18,10 +18,10 @@ class TwikitClient:
     Thin wrapper around twikit.Client for auth + low-level operations.
 
     Usage:
-        tc = TwikitClient()
-        await tc.login()
-        tweets = await tc.search("some query", count=30)
-        full = await tc.get_tweet_by_id(tweets[0].id)
+        client = TwikitClient()
+        await client.login()
+        tweets = await client.search_tweet(query="some query", count=30)
+        detailed_tweet = await client.get_tweet_by_id(tweet_id="1234567890")
     """
 
     def __init__(
@@ -51,44 +51,50 @@ class TwikitClient:
         )
         logger.debug("Twikit login successful.")
 
-    async def search(self, query: str, count: int, product: str = "top") -> List[Any]:
-        """ "
+    async def search_tweet(
+        self,
+        query: str,
+        count: int,
+        product: str = "Top",
+    ) -> List[Tweet]:
+        """
         Search tweets for a query. Returns a list of lightweight Tweet objects.
 
         Params:
             query: Free text search query.
             count: Maximum number of results to fetch.
-            product: Search product ("top", "latest", etc).
+            product: Search product ("Top", "Latest", "Media").
 
         Returns:
-            List[Any]: Twikit tweet objects (lightweight). For full details, use get_tweet_by_id().
+            List[Tweet]: Twikit tweet objects (lightweight). For full details, hydrate via get_tweet_by_id().
         """
         try:
-            tweets = await self._client.search_tweet(
+            tweets: List[Tweet] = await self._client.search_tweet(
                 query=query,
                 product=product,
                 count=count,
             )
             return tweets or []
         except TooManyRequests:
-            logger.error("Rate limited by Twitter/X API. Try again later.")
+            logger.error("Rate limited by Twitter/X API during search.")
             return []
         except Exception as e:
-            logger.warning(f"search() failed: {e}")
+            logger.warning(f"An unexpected error occurred during search: {e}")
             return []
 
-    async def get_tweet_by_id(self, tweet_id: str | int) -> Any:
+    async def get_tweet_by_id(self, tweet_id: str | int) -> Optional[Tweet]:
         """
         Hydrate a single tweet by id. The returned object generally includes
         full media information (e.g. Video.streams / url).
         """
         try:
-            return await self._client.get_tweet_by_id(tweet_id)
+            tweet: Tweet = await self._client.get_tweet_by_id(tweet_id)
+            return tweet
         except TooManyRequests:
-            logger.error("Rate limited by Twitter/X API. Try again later.")
+            logger.error(f"Rate limited while fetching tweet {tweet_id}.")
             raise
         except Exception as e:
-            logger.warning(f"get_tweet_by_id() failed: {e}")
+            logger.warning(f"Failed to get tweet {tweet_id}: {e}")
             raise
 
     @property
