@@ -67,8 +67,8 @@ async def analyze_video_for_clip(
             return None
 
     llm = ChatGoogleGenerativeAI(
-        model=settings.gemini.vision_model,
-        api_key=settings.gemini.api_key,
+        model=settings.gemini_model,
+        api_key=settings.gemini_api_key.get_secret_value(),
     )
     structured_llm = llm.with_structured_output(VisionAnalysisResponse)
 

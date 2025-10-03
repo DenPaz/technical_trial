@@ -43,9 +43,9 @@ class TwikitClient:
         - cookies_file allows reusing the session across runs.
         """
         await self._client.login(
-            auth_info_1=settings.TWITTER_USERNAME,
-            auth_info_2=settings.TWITTER_EMAIL or None,
-            password=settings.TWITTER_PASSWORD,
+            auth_info_1=settings.twitter_username,
+            auth_info_2=settings.twitter_email or None,
+            password=settings.twitter_password.get_secret_value(),
             cookies_file=self._cookies_file,
             enable_ui_metrics=True,
         )

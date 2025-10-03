@@ -1,11 +1,13 @@
+from functools import lru_cache
 from pathlib import Path
 
+from pydantic import EmailStr
 from pydantic import Field
+from pydantic import SecretStr
 from pydantic_settings import BaseSettings
 from pydantic_settings import SettingsConfigDict
 
-# Project base directory
-BASE_DIR = Path(__file__).parent.parent.parent
+BASE_DIR = Path(__file__).resolve().parents[2]
 
 
 class AppSettings(BaseSettings):
@@ -13,26 +15,11 @@ class AppSettings(BaseSettings):
     Application settings loaded from environment variables.
     """
 
-    TWITTER_USERNAME: str = Field(
-        ...,
-        description="Twitter/X username for login.",
-    )
-    TWITTER_PASSWORD: str = Field(
-        ...,
-        description="Twitter/X password for login.",
-    )
-    TWITTER_EMAIL: str | None = Field(
-        None,
-        description="Twitter/X email (sometimes required for login).",
-    )
-    GOOGLE_API_KEY: str = Field(
-        ...,
-        description="API key for Google Gemini.",
-    )
-    GEMINI_MODEL: str = Field(
-        "gemini-2.5-flash",
-        description="Google Gemini model to use for analysis.",
-    )
+    twitter_username: str = Field(..., env="TWITTER_USERNAME")
+    twitter_email: EmailStr = Field(..., env="TWITTER_EMAIL")
+    twitter_password: SecretStr = Field(..., env="TWITTER_PASSWORD")
+    gemini_api_key: SecretStr = Field(..., env="GEMINI_API_KEY")
+    gemini_model: str = Field("gemini-2.5-flash", env="GEMINI_MODEL")
     model_config = SettingsConfigDict(
         env_file=BASE_DIR / ".env",
         env_file_encoding="utf-8",
@@ -40,4 +27,12 @@ class AppSettings(BaseSettings):
     )
 
 
-settings = AppSettings()
+@lru_cache(maxsize=1)
+def get_settings() -> AppSettings:
+    """
+    Get cached application settings.
+    """
+    return AppSettings()
+
+
+settings = get_settings()

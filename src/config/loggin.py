@@ -1,13 +1,35 @@
-import logging
+from logging.config import dictConfig
 
 
 def setup_logging() -> None:
     """
-    Configures the logging for the application.
+    Configures logging for the application.
     """
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s - [%(levelname)s] - %(name)s - %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-    )
-    logging.getLogger("httpx").setLevel(logging.WARNING)
+    logging_config = {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "formatters": {
+            "default": {
+                "format": "[%(levelname)s] %(asctime)s %(name)s %(message)s",
+                "datefmt": "%Y-%m-%d %H:%M:%S",
+            },
+        },
+        "handlers": {
+            "console": {
+                "level": "INFO",
+                "class": "logging.StreamHandler",
+                "formatter": "default",
+            },
+        },
+        "root": {
+            "level": "INFO",
+            "handlers": ["console"],
+        },
+        "loggers": {
+            "httpx": {
+                "level": "WARNING",
+                "propagate": True,
+            },
+        },
+    }
+    dictConfig(logging_config)

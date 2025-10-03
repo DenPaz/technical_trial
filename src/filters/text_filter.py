@@ -41,8 +41,8 @@ async def filter_candidates_by_text(
     if not candidates:
         return []
     llm = ChatGoogleGenerativeAI(
-        model=settings.GEMINI_MODEL,
-        api_key=settings.GOOGLE_API_KEY,
+        model=settings.gemini_model,
+        api_key=settings.gemini_api_key.get_secret_value(),
     )
     structured_llm = llm.with_structured_output(TextFilterResults)
     candidate_texts = [{"url": str(c.tweet_url), "text": c.text} for c in candidates]
