@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 def _get_best_video_url(tweet: Tweet) -> Optional[str]:
-    """ "
+    """
     Extracts the highest bitrate MP4 video URL from a tweet object.
     """
     if not hasattr(tweet, "media") or not tweet.media:
@@ -39,7 +39,7 @@ async def scrape_candidates(query: str, max_candidates: int = 10) -> List[Candid
         max_candidates: Maximum number of tweets to return.
 
     Returns:
-        List of dicts with tweet metadata.
+        List of Candidate objects containing tweet and video information.
     """
 
     client = TwikitClient()
@@ -76,8 +76,6 @@ async def scrape_candidates(query: str, max_candidates: int = 10) -> List[Candid
                 text=tweet.text,
                 author=tweet.user.screen_name,
                 created_at=tweet.created_at,
-                like_count=tweet.favorite_count,
-                retweet_count=tweet.retweet_count,
             )
         )
     logger.info(f"Found {len(results)} candidate tweets with videos.")
