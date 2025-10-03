@@ -3,7 +3,7 @@ from logging.config import dictConfig
 
 def setup_logging() -> None:
     """
-    Configures logging for the application.
+    Set up logging configuration.
     """
     logging_config = {
         "version": 1,

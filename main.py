@@ -1,8 +1,10 @@
 import argparse
 import asyncio
 import logging
+from pathlib import Path
 
-from src.config.loggin import setup_logging
+from src.config.logging import setup_logging
+from src.config.settings import BASE_DIR
 from src.filters.text_filter import filter_candidates_by_text
 from src.scraper.service import scrape_candidates
 from src.vision.analyzer import analyze_video_for_clip
@@ -11,25 +13,25 @@ setup_logging()
 logger = logging.getLogger(__name__)
 
 
-def parse_arguments() -> argparse.Namespace:
+def parse_args() -> argparse.Namespace:
     """
-    Parses command-line arguments.
+    Parse command-line arguments.
     """
     parser = argparse.ArgumentParser(
-        description="AI-powered Twitter clip scraper.",
+        description="AI-powered Twitter video clip scraper.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument(
         "--description",
         type=str,
         required=True,
-        help="Description of the media to search for.",
+        help="Description of the media content to search for.",
     )
     parser.add_argument(
         "--duration",
         type=int,
         required=True,
-        help="Target duration of the final clip in seconds.",
+        help="Target duration of the video clips in seconds.",
     )
     parser.add_argument(
         "--max-candidates",
@@ -39,18 +41,19 @@ def parse_arguments() -> argparse.Namespace:
     )
     parser.add_argument(
         "--out",
-        type=str,
-        default="results.json",
-        help="Output file for the results.",
+        type=Path,
+        default=BASE_DIR / "results.json",
+        help="Path to the output JSON file.",
     )
     return parser.parse_args()
 
 
 async def main() -> None:
-    """The main asynchronous entry point of the application."""
-    args = parse_arguments()
-    logger.info(f"Starting job with parameters: {args}")
-
+    """
+    The main async entry point of the application.
+    """
+    args = parse_args()
+    logger.info(f"Starting application with arguments: {args}")
     try:
         # Step 1: Scrape initial candidates
         scraped_candidates = await scrape_candidates(
@@ -107,6 +110,6 @@ if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
-        logger.info("Program interrupted by user.")
+        logger.info("Application interrupted by user.")
     except Exception as e:
-        logger.error(f"An unexpected error occurred: {e}", exc_info=True)
+        logger.error(f"Unhandled exception: {e}", exc_info=True)

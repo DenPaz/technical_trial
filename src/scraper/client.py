@@ -30,7 +30,7 @@ class TwikitClient:
         cookies_file: Optional[Path] = None,
     ) -> None:
         self._client = Client(locale)
-        self._cookies_file = str(cookies_file or BASE_DIR / "cookies.json")
+        self._cookies_file = cookies_file or BASE_DIR / "cookies.json"
 
     async def login(self) -> None:
         """
@@ -74,12 +74,13 @@ class TwikitClient:
                 product=product,
                 count=count,
             )
+            logger.debug(f"Fetched {len(tweets)} tweets for query: {query}")
             return tweets or []
-        except TooManyRequests:
-            logger.error("Rate limited by Twitter/X API during search.")
+        except TooManyRequests as e:
+            logger.error(f"Rate limit exceeded: {e}", exc_info=True)
             return []
         except Exception as e:
-            logger.warning(f"An unexpected error occurred during search: {e}")
+            logger.error(f"Error during tweet search: {e}", exc_info=True)
             return []
 
     async def get_tweet_by_id(self, tweet_id: str | int) -> Optional[Tweet]:
@@ -89,16 +90,17 @@ class TwikitClient:
         """
         try:
             tweet: Tweet = await self._client.get_tweet_by_id(tweet_id)
+            logger.debug(f"Fetched tweet ID {tweet_id}")
             return tweet
-        except TooManyRequests:
-            logger.error(f"Rate limited while fetching tweet {tweet_id}.")
-            raise
+        except TooManyRequests as e:
+            logger.error(f"Rate limit exceeded: {e}", exc_info=True)
+            return None
         except Exception as e:
-            logger.warning(f"Failed to get tweet {tweet_id}: {e}")
-            raise
+            logger.error(f"Error fetching tweet ID {tweet_id}: {e}", exc_info=True)
+            return None
 
     @property
-    def raw(self) -> Client:
+    def client(self) -> Client:
         """
         Expose the underlying twikit.Client instance for advanced usage.
         """

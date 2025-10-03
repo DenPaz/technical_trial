@@ -10,7 +10,7 @@ from pydantic import field_validator
 
 class Candidate(BaseModel):
     """
-    A single tweet/video candidate discovered by the scraper.
+    Schema representing a tweet candidate for processing.
     """
 
     tweet_url: HttpUrl
@@ -19,14 +19,11 @@ class Candidate(BaseModel):
     text: str
     author: str
     created_at: datetime
-    like_count: int
-    retweet_count: int
 
     @field_validator("created_at", mode="before")
-    @classmethod
-    def parse_created_at(cls, value):
+    def parse_created_at(cls, value: str) -> datetime:
         """
-        Custom validator to parse Twitter's specific datetime format.
+        Validate and parse Twitter's specific datetime format.
         """
         if isinstance(value, str):
             return datetime.strptime(value, "%a %b %d %H:%M:%S %z %Y")
