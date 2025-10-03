@@ -5,19 +5,14 @@ from pathlib import Path
 
 from src.config.logging import setup_logging
 from src.config.settings import BASE_DIR
-from src.filters.text_filter import filter_candidates_by_text
-from src.scraper.service import scrape_candidates
-from src.selector.selector import select_best_clip
-from src.vision.analyzer import analyze_video_for_clip
+from src.graph import app
 
 setup_logging()
 logger = logging.getLogger(__name__)
 
 
 def parse_args() -> argparse.Namespace:
-    """
-    Parse command-line arguments.
-    """
+    """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         description="AI-powered Twitter video clip scraper.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -50,63 +45,36 @@ def parse_args() -> argparse.Namespace:
 
 
 async def main() -> None:
-    """
-    The main async entry point of the application.
-    """
+    """The main async entry point of the application."""
     args = parse_args()
     logger.info(f"Starting application with arguments: {args}")
-    trace_info = {}
+
+    # Define the initial state to pass to the graph
+    initial_state = {
+        "description": args.description,
+        "duration_seconds": args.duration,
+        "max_candidates": args.max_candidates,
+        "trace_info": {},  # Initialize an empty dictionary for tracing
+    }
+
     try:
-        # Step 1: Scrape initial candidates
-        scraped_candidates = await scrape_candidates(
-            args.description,
-            args.max_candidates,
-        )
-        trace_info["scraped_count"] = len(scraped_candidates)
-        logger.info(f"Scraper returned {len(scraped_candidates)} candidates.")
+        # Asynchronously invoke the LangGraph app with the initial state
+        final_state = await app.ainvoke(initial_state)
+        final_result = final_state.get("final_result")
 
-        # Step 2: Filter candidates based on text relevance
-        filtered_candidates = await filter_candidates_by_text(
-            scraped_candidates,
-            args.description,
-        )
-        trace_info["text_filtered_count"] = len(filtered_candidates)
-        if not filtered_candidates:
-            logger.warning("No candidates remained after text filtering. Exiting.")
-            return
-
-        # Step 3: Analyze video for the remaining candidates concurrently
-        logger.info(
-            f"Starting vision analysis for {len(filtered_candidates)} candidates..."
-        )
-        vision_tasks = [
-            analyze_video_for_clip(c, args.description, args.duration)
-            for c in filtered_candidates
-        ]
-        vision_results = await asyncio.gather(*vision_tasks)
-
-        # Filter out any None results from failed analyses
-        successful_results = [res for res in vision_results if res and res.findings]
-        trace_info["vision_analysis_count"] = len(successful_results)
-        if not successful_results:
-            logger.warning("Vision analysis did not find any matching clips. Exiting.")
-            return
-
-        # Step 4: Select the best clip and format the output
-        final_result = select_best_clip(successful_results, trace_info)
-
-        # Step 5: Write the final JSON file
+        # Write the final result to the output file
         if final_result:
             output_path = args.out
             output_path.parent.mkdir(parents=True, exist_ok=True)
             output_path.write_text(final_result.model_dump_json(indent=2))
             logger.info(f"✅ Success! Results written to {output_path}")
         else:
-            logger.warning("Could not determine a final best clip.")
+            logger.warning(
+                "The pipeline finished, but could not determine a final best clip."
+            )
 
     except Exception as e:
-        logger.error(f"An error occurred in the main pipeline: {e}", exc_info=True)
-        return
+        logger.error(f"An error occurred in the graph pipeline: {e}", exc_info=True)
 
 
 if __name__ == "__main__":

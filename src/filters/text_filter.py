@@ -1,3 +1,4 @@
+import json
 import logging
 from typing import List
 
@@ -7,26 +8,16 @@ from pydantic import Field
 from pydantic import HttpUrl
 
 from src.config.settings import settings
+from src.prompts.utils import load_prompt
 from src.scraper.schemas import Candidate
 
 logger = logging.getLogger(__name__)
 
 
 class ScoredCandidateResult(BaseModel):
-    tweet_url: HttpUrl = Field(
-        ...,
-        description="The URL of the tweet being scored.",
-    )
-    score: float = Field(
-        ...,
-        ge=0,
-        le=1,
-        description="Relevance score from 0.0 (irrelevant) to 1.0 (highly relevant).",
-    )
-    reason: str = Field(
-        ...,
-        description="Brief explanation for the assigned score.",
-    )
+    tweet_url: HttpUrl
+    score: float = Field(ge=0, le=1)
+    reason: str
 
 
 class TextFilterResults(BaseModel):
@@ -43,21 +34,19 @@ async def filter_candidates_by_text(
     llm = ChatGoogleGenerativeAI(
         model=settings.gemini_model,
         api_key=settings.gemini_api_key.get_secret_value(),
+        temperature=0.0,
     )
     structured_llm = llm.with_structured_output(TextFilterResults)
+    prompt_template = load_prompt("text_filter_prompt.txt")
+    if not prompt_template:
+        logger.error("Could not load text filter prompt template.")
+        return candidates
     candidate_texts = [{"url": str(c.tweet_url), "text": c.text} for c in candidates]
-    prompt = f"""
-    You are an intelligent filter for social media content.
-    A user is looking for a video described as: "{description}"
-
-    I have found the following tweets. Your task is to evaluate how relevant the TEXT of each tweet is to the user's description. A high score means the text suggests the video is a great match.
-
-    Evaluate each of the following candidates:
-    {candidate_texts}
-
-    Provide a relevance score from 0.0 to 1.0 for each tweet. A score of 1.0 means the text is a perfect match for the description. A score of 0.0 means it's completely irrelevant. Also provide a brief reason for your score.
-    """
-
+    candidate_texts_json = json.dumps(candidate_texts, indent=2)
+    prompt = prompt_template.format(
+        description=description,
+        candidate_texts=candidate_texts_json,
+    )
     logger.info(f"Sending {len(candidates)} candidates to LLM for text analysis...")
 
     try:

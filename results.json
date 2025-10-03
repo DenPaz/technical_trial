@@ -3,13 +3,24 @@
   "video_url": "https://t.co/ImzOqyvcaY",
   "start_time_s": 0.0,
   "end_time_s": 15.0,
-  "confidence": 0.95,
-  "reason": "The lower-third graphic in the video indicates that Donald Trump is speaking at a memorial service for Charlie Kirk.",
-  "alternates": [],
+  "confidence": 0.9,
+  "reason": "The provided video frames contain a chyron that explicitly mentions 'Charlie Kirk' while Donald Trump is speaking, which directly aligns with the user's query.",
+  "alternates": [
+    {
+      "start_time_s": 4.0,
+      "end_time_s": 19.0,
+      "confidence": 0.9
+    },
+    {
+      "start_time_s": 0.0,
+      "end_time_s": 15.0,
+      "confidence": 0.8
+    }
+  ],
   "trace": {
     "candidates_considered": 4,
     "filtered_by_text": 3,
-    "vision_calls": 1,
+    "vision_calls": 3,
     "final_choice_rank": 1
   }
 }

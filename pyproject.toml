@@ -18,4 +18,5 @@ dependencies = [
   "ruff==0.13.2",
   "twikit==2.3.3",
   "yt-dlp==2025.9.26",
+  "pytest==8.4.2",
 ]
