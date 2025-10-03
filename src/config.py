@@ -29,14 +29,6 @@ class AppSettings(BaseSettings):
     Application settings loaded from environment variables.
     """
 
-    GOOGLE_API_KEY: str = Field(
-        ...,
-        description="API key for Google Gemini.",
-    )
-    GOOGLE_MODEL: str = Field(
-        "gemini-2.5-flash",
-        description="Google Gemini model to use for analysis.",
-    )
     TWITTER_USERNAME: str = Field(
         ...,
         description="Twitter/X username for login.",
@@ -48,6 +40,14 @@ class AppSettings(BaseSettings):
     TWITTER_EMAIL: str | None = Field(
         None,
         description="Twitter/X email (sometimes required for login).",
+    )
+    GOOGLE_API_KEY: str = Field(
+        ...,
+        description="API key for Google Gemini.",
+    )
+    GEMINI_MODEL: str = Field(
+        "gemini-2.5-flash",
+        description="Google Gemini model to use for analysis.",
     )
     model_config = SettingsConfigDict(
         env_file=Path(__file__).parent.parent / ".env",

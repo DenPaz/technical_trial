@@ -41,7 +41,7 @@ async def filter_candidates_by_text(
     if not candidates:
         return []
     llm = ChatGoogleGenerativeAI(
-        model=settings.GOOGLE_MODEL,
+        model=settings.GEMINI_MODEL,
         api_key=settings.GOOGLE_API_KEY,
     )
     structured_llm = llm.with_structured_output(TextFilterResults)
