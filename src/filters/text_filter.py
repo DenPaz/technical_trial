@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from pydantic import Field
 from pydantic import HttpUrl
 
-from src.config import settings
+from src.config.settings import settings
 from src.scraper.schemas import Candidate
 
 logger = logging.getLogger(__name__)

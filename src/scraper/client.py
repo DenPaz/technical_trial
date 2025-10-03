@@ -7,8 +7,8 @@ from twikit import Client
 from twikit import TooManyRequests
 from twikit import Tweet
 
-from src.config import BASE_DIR
-from src.config import settings
+from src.config.settings import BASE_DIR
+from src.config.settings import settings
 
 logger = logging.getLogger(__name__)
 
