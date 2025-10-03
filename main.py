@@ -7,6 +7,7 @@ from src.config.logging import setup_logging
 from src.config.settings import BASE_DIR
 from src.filters.text_filter import filter_candidates_by_text
 from src.scraper.service import scrape_candidates
+from src.selector.selector import select_best_clip
 from src.vision.analyzer import analyze_video_for_clip
 
 setup_logging()
@@ -54,12 +55,14 @@ async def main() -> None:
     """
     args = parse_args()
     logger.info(f"Starting application with arguments: {args}")
+    trace_info = {}
     try:
         # Step 1: Scrape initial candidates
         scraped_candidates = await scrape_candidates(
             args.description,
             args.max_candidates,
         )
+        trace_info["scraped_count"] = len(scraped_candidates)
         logger.info(f"Scraper returned {len(scraped_candidates)} candidates.")
 
         # Step 2: Filter candidates based on text relevance
@@ -67,6 +70,7 @@ async def main() -> None:
             scraped_candidates,
             args.description,
         )
+        trace_info["text_filtered_count"] = len(filtered_candidates)
         if not filtered_candidates:
             logger.warning("No candidates remained after text filtering. Exiting.")
             return
@@ -83,23 +87,22 @@ async def main() -> None:
 
         # Filter out any None results from failed analyses
         successful_results = [res for res in vision_results if res and res.findings]
-
+        trace_info["vision_analysis_count"] = len(successful_results)
         if not successful_results:
             logger.warning("Vision analysis did not find any matching clips. Exiting.")
             return
 
-        # TODO: Implement Step 4 - Select the best clip from successful_results
+        # Step 4: Select the best clip and format the output
+        final_result = select_best_clip(successful_results, trace_info)
 
-        logger.info(
-            f"Vision analysis complete. Found {len(successful_results)} videos with potential clips."
-        )
-        for result in successful_results:
-            for finding in result.findings:
-                logger.info(
-                    f"  - Found clip in {result.tweet_url} "
-                    f"from {finding.start_time_s:.1f}s to {finding.end_time_s:.1f}s "
-                    f"(Confidence: {finding.confidence:.2f})"
-                )
+        # Step 5: Write the final JSON file
+        if final_result:
+            output_path = args.out
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            output_path.write_text(final_result.model_dump_json(indent=2))
+            logger.info(f"✅ Success! Results written to {output_path}")
+        else:
+            logger.warning("Could not determine a final best clip.")
 
     except Exception as e:
         logger.error(f"An error occurred in the main pipeline: {e}", exc_info=True)
