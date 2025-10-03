@@ -1,0 +1,21 @@
+[tool.ruff.lint.isort]
+force-single-line = true
+
+[project]
+name = "technical-trial"
+version = "0.1.0"
+description = "Technical trial for Dennis"
+readme = "README.md"
+authors = [{ name = "Dennis Paz", email = "dppazlopez@gmail.com" }]
+requires-python = "==3.13.*"
+dependencies = [
+  "argparse==1.4.0",
+  "dotenv==0.9.9",
+  "langchain[google-genai]==0.3.27",
+  "langgraph==0.6.8",
+  "pydantic==2.11.9",
+  "pydantic-settings==2.11.0",
+  "ruff==0.13.2",
+  "tenacity==9.1.2",
+  "twikit==2.3.3",
+]
