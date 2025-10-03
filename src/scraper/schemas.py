@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import List
+from typing import Optional
 
 from pydantic import BaseModel
 from pydantic import Field
@@ -14,6 +15,7 @@ class Candidate(BaseModel):
 
     tweet_url: HttpUrl
     video_urls: List[HttpUrl] = Field(default_factory=list)
+    best_video_url: Optional[HttpUrl] = None
     text: str
     author: str
     created_at: datetime
