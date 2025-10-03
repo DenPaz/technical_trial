@@ -33,6 +33,10 @@ class AppSettings(BaseSettings):
         ...,
         description="API key for Google Gemini.",
     )
+    GOOGLE_MODEL: str = Field(
+        "gemini-2.5-flash",
+        description="Google Gemini model to use for analysis.",
+    )
     TWITTER_USERNAME: str = Field(
         ...,
         description="Twitter/X username for login.",

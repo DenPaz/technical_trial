@@ -3,6 +3,7 @@ import asyncio
 import logging
 
 from src.config import setup_logging
+from src.filters.text_filter import filter_candidates_by_text
 from src.scraper.service import scrape_candidates
 
 setup_logging()
@@ -51,17 +52,25 @@ async def main() -> None:
     args = parse_arguments()
     logger.info(f"Starting job with parameters: {args}")
     try:
-        candidates = await scrape_candidates(args.description, args.max_candidates)
-        logger.info(f"Scraper returned {len(candidates)} candidates")
-        for c in candidates:
+        scraped_candidates = await scrape_candidates(
+            args.description,
+            args.max_candidates,
+        )
+        filtered_candidates = await filter_candidates_by_text(
+            scraped_candidates,
+            args.description,
+            score_threshold=0.5,
+        )
+        logger.info(f"Pipeline finished. Final candidates: {len(filtered_candidates)}")
+        for c in filtered_candidates:
             logger.info(
-                "Candidate: %s | author=%s | video=%s",
+                "Final Candidate: %s | author=%s | video=%s",
                 c.tweet_url,
                 c.author,
                 c.best_video_url,
             )
     except Exception as e:
-        logger.error(f"An error occurred during scraping: {e}")
+        logger.error(f"An error occurred in the main pipeline: {e}", exc_info=True)
         return
 
 
