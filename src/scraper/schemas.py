@@ -21,6 +21,7 @@ class Candidate(BaseModel):
     created_at: datetime
 
     @field_validator("created_at", mode="before")
+    @classmethod
     def parse_created_at(cls, value: str) -> datetime:
         """
         Validate and parse Twitter's specific datetime format.

@@ -1,26 +1,21 @@
 {
-  "tweet_url": "https://x.com/niceblackdude/status/1969908730679763151",
-  "video_url": "https://t.co/ImzOqyvcaY",
+  "tweet_url": "https://x.com/TONYxTWO/status/1966650129387073846",
+  "video_url": "https://t.co/0SmwkoLRM3",
   "start_time_s": 0.0,
   "end_time_s": 15.0,
   "confidence": 0.9,
-  "reason": "The provided video frames contain a chyron that explicitly mentions 'Charlie Kirk' while Donald Trump is speaking, which directly aligns with the user's query.",
+  "reason": "The video features a montage of Charlie Kirk, which aligns with the user's request for a clip about 'Trump talking about Charlie Kirk'. The suggested 15-second clip from the beginning of the video is highly likely to contain the specified content, assuming the audio track includes Donald Trump's speech.",
   "alternates": [
-    {
-      "start_time_s": 4.0,
-      "end_time_s": 19.0,
-      "confidence": 0.9
-    },
     {
       "start_time_s": 0.0,
       "end_time_s": 15.0,
-      "confidence": 0.8
+      "confidence": 0.9
     }
   ],
   "trace": {
     "candidates_considered": 4,
     "filtered_by_text": 3,
-    "vision_calls": 3,
+    "vision_calls": 2,
     "final_choice_rank": 1
   }
 }
