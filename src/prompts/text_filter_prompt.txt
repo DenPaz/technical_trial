@@ -13,7 +13,8 @@ Candidates:
 {{"url": "https://www.google.com/search?q=https://x.com/user3/status/789", "text": "Just saw Biden speak. He looked tired."}}
 ]
 
-Expected Output: {{ "results": [ {{ "tweet_url": "https://www.google.com/search?q=https://x.com/user1/status/123", "score": 0.9, "reason": "The text directly mentions 'President Biden' and 'economy', and references a 'full speech', making it highly relevant." }}, {{ "tweet_url": "https://www.google.com/search?q=https://x.com/user2/status/456", "score": 0.0, "reason": "The text is about a cat video and is completely irrelevant to the user's query about Joe Biden and the economy." }}, {{ "tweet_url": "https://www.google.com/search?q=https://x.com/user3/status/789", "score": 0.4, "reason": "The text mentions 'Biden' but provides no specific context about the economy. It is weakly relevant and might contain the desired content, but it's not a strong signal." }} ] }}
+Expected JSON Output: {{ "results": [ {{ "tweet_url": "https://www.google.com/search?q=https://x.com/user1/status/123", "score": 0.9, "reason": "The text directly mentions 'President Biden' and 'economy', and references a 'full speech', making it highly relevant." }}, {{ "tweet_url": "https://www.google.com/search?q=https://x.com/user2/status/456", "score": 0.0, "reason": "The text is about a cat video and is completely irrelevant to the user's query about Joe Biden and the economy." }}, {{ "tweet_url": "https://www.google.com/search?q=https://x.com/user3/status/789", "score": 0.4, "reason": "The text mentions 'Biden' but provides no specific context about the economy. It is weakly relevant and might contain the desired content, but it's not a strong signal." }} ] }}
+
 TASK
 
 Now, evaluate the following candidates based on the user's description. Provide a relevance score from 0.0 to 1.0 for each tweet and a brief reason for your score.
@@ -23,4 +24,4 @@ User Description: "{description}"
 Candidates:
 {candidate_texts}
 
-Provide your response in the format specified in the example.
+Provide your response as a single JSON object in the format specified in the example.

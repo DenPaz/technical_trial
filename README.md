@@ -1,5 +1,7 @@
 # Technical Trial
 
+## Project structure
+
 ```
 technical_trial/
 ├── .venv/

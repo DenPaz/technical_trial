@@ -3,14 +3,14 @@ from logging.config import dictConfig
 
 def setup_logging() -> None:
     """
-    Set up logging configuration.
+    Sets up a shared logging configuration for the entire application.
     """
     logging_config = {
         "version": 1,
         "disable_existing_loggers": False,
         "formatters": {
             "default": {
-                "format": "[%(levelname)s] %(asctime)s %(name)s %(message)s",
+                "format": "[%(levelname)s] %(asctime)s %(name)s: %(message)s",
                 "datefmt": "%Y-%m-%d %H:%M:%S",
             },
         },
@@ -26,10 +26,8 @@ def setup_logging() -> None:
             "handlers": ["console"],
         },
         "loggers": {
-            "httpx": {
-                "level": "WARNING",
-                "propagate": True,
-            },
+            "httpx": {"level": "WARNING", "propagate": True},
+            "watchfiles": {"level": "WARNING", "propagate": True},
         },
     }
     dictConfig(logging_config)

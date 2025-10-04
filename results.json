@@ -1,15 +1,20 @@
 {
   "tweet_url": "https://x.com/TONYxTWO/status/1966650129387073846",
   "video_url": "https://t.co/0SmwkoLRM3",
-  "start_time_s": 0.0,
-  "end_time_s": 15.0,
-  "confidence": 0.9,
-  "reason": "The video features a montage of Charlie Kirk, which aligns with the user's request for a clip about 'Trump talking about Charlie Kirk'. The suggested 15-second clip from the beginning of the video is highly likely to contain the specified content, assuming the audio track includes Donald Trump's speech.",
+  "start_time_s": 34.0,
+  "end_time_s": 50.0,
+  "confidence": 0.8,
+  "reason": "The frames show Charlie Kirk speaking at a podium with \"TRUMP VANCE 2024\" visible on it. This directly matches the description of Charlie Kirk and implies a connection to Trump. The duration is 16 seconds, which is within the acceptable range.",
   "alternates": [
     {
+      "start_time_s": 60.0,
+      "end_time_s": 76.0,
+      "confidence": 0.7
+    },
+    {
       "start_time_s": 0.0,
-      "end_time_s": 15.0,
-      "confidence": 0.9
+      "end_time_s": 16.0,
+      "confidence": 0.1
     }
   ],
   "trace": {

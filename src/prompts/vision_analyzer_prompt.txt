@@ -5,9 +5,9 @@ Target Duration: {duration_seconds} seconds
 
 INSTRUCTIONS
 
-Analyze the Frames: Carefully examine the provided video frames.
+Analyze the Frames: Carefully examine the provided video frames to understand the content, speakers, and any on-screen text.
 
-Identify Relevant Segments: Locate segments where the content matches the user's description.
+Identify Relevant Segments: Locate segments where the content directly matches the user's description.
 
 Find Continuous Clips: Within those segments, identify continuous clips that are approximately {duration_seconds} seconds long. A reasonable deviation of +/- 2 seconds is acceptable if an exact match isn't possible.
 
@@ -15,14 +15,14 @@ Assign Confidence: For each clip you find, provide a confidence score from 0.0 (
 
 Provide Reasoning: Justify your confidence score with a clear, concise reason. Mention key visual cues, identified speakers, topics discussed, or on-screen text that supports your decision.
 
-Calculate Timestamps: The frames are extracted at 2-second intervals. The first frame is at 0s, the second at 2s, the third at 4s, and so on. Calculate the start and end times for each clip based on the frames.
+Calculate Timestamps: The frames are extracted at 2-second intervals. The first frame is at 0s, the second at 2s, the third at 4s, and so on. Calculate the start and end times for each clip based on these frame intervals.
 
 EXAMPLE
 
 User Description: "A clip of a developer presenting a new feature at a conference."
 Target Duration: 10 seconds
 
-Expected Output for a good match:
+Expected JSON Output for a good match:
 {{
 "findings": [
 {{
@@ -40,7 +40,8 @@ Expected Output for a good match:
 ]
 }}
 
-Expected Output if no good match is found: {{ "findings": [] }}
+Expected JSON Output if no good match is found: {{ "findings": [] }}
+
 TASK
 
-Analyze the frames provided for a clip about "{description}" lasting approximately {duration_seconds} seconds. Identify the best possible clips, their start and end times, confidence scores, and your reasoning.
+Analyze the frames provided for a clip about "{description}" lasting approximately {duration_seconds} seconds. Identify the best possible clips, their start and end times, confidence scores, and your reasoning. Provide your response as a single JSON object.
