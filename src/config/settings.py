@@ -16,12 +16,12 @@ class AppSettings(BaseSettings):
     Application settings loaded from environment variables in the .env file.
     """
 
-    twitter_username: str = Field(..., env="TWITTER_USERNAME")
-    twitter_email: EmailStr = Field(..., env="TWITTER_EMAIL")
-    twitter_password: SecretStr = Field(..., env="TWITTER_PASSWORD")
+    twitter_username: str = Field(...)
+    twitter_email: EmailStr = Field(...)
+    twitter_password: SecretStr = Field(...)
 
-    gemini_api_key: SecretStr = Field(..., env="GEMINI_API_KEY")
-    gemini_model: str = Field("gemini-2.5-flash", env="GEMINI_MODEL")
+    gemini_api_key: SecretStr = Field(...)
+    gemini_model: str = Field("gemini-2.5-flash")
 
     model_config = SettingsConfigDict(
         env_file=BASE_DIR / ".env",
