@@ -25,6 +25,12 @@ graph TD
     F -- Yes --> G["Rank & select best clip<br><b>selector/selector.py</b>"];
     F -- No --> Z;
     G --> H(End: Final JSON output);
+
+style A fill:#D6EAF8,stroke:#2980B9,stroke-width:2px
+style H fill:#D5F5E3,stroke:#27AE60,stroke-width:2px
+style Z fill:#FADBD8,stroke:#C0392B,stroke-width:2px
+style D fill:#FDEBD0,stroke:#F39C12,stroke-width:2px,stroke-dasharray: 5 5
+style F fill:#FDEBD0,stroke:#F39C12,stroke-width:2px,stroke-dasharray: 5 5
 ```
 
 ## 2. Candidate Filtering Strategy
